@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">  
+  <script src="./validate.min.js"></script>
+  <style>
+    .help-block.error {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+    <form id="userForm">
+      <div class="form-group">
+        <label class="col-sm-2 control-label" for="email">UserName</label>
+        <div class="col-sm-5">
+          <input id="userName" class="form-control" type="text" placeholder="userName" name="userName" />
+        </div>
+        <div id="error_msg" class="col-sm-5 messages"></div>
+      </div>
+    </form>
+  <script>
+    (function() { 
+    document.getElementById('userName').focus();
+    var userForm = document.getElementById('userForm');
+
+      var constraints = {        
+        userName: {          
+          presence: true,          
+          format: {            
+            pattern: "[a-z0-9]+",            
+            flags: "i",
+            message: "can only contain a-z and 0-9"
+          },
+          length: {
+            minimum: 3,
+            maximum: 20
+          }
+        }        
+      };
+
+      userName.addEventListener('blur', function() {
+          var result = validate(userForm, constraints);
+          var error_msg = document.getElementById('error_msg');
+
+          if(result == undefined) {
+            error_msg.innerHTML = '';
+            alert("Correct Name");              
+          }
+          else { 
+            error_msg.innerHTML = result['userName'][0];
+          }
+      }); 
+      
+    })();
+  </script>
+</body>
+</html>

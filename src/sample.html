@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
+  <script src="./validate.min.js"></script>
+  <style>
+    .help-block.error {
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">    
+    <form id="main" class="form-horizontal" action="/example" method="post" novalidate>
+      <div class="form-group">
+        <label class="col-sm-2 control-label" for="email">UserName</label>
+        <div class="col-sm-5">
+          <input id="username" class="form-control" type="text" placeholder="UserName" name="username">
+        </div>
+        <div class="col-sm-5 messages"></div>
+      </div>      
+    </form>
+  </div>
+  <script>
+    (function() {            
+      var constraints = {        
+        username: {          
+          presence: true,          
+          length: {
+            minimum: 3,
+            maximum: 20
+          },
+          format: {            
+            pattern: "[a-z0-9]+",            
+            flags: "i",
+            message: "can only contain a-z and 0-9"
+          }
+        }        
+      }     
+
+      var form = document.querySelector("form#main");      
+
+      var inputs = document.querySelectorAll("input, textarea, select");
+
+      for (var i = 0; i < inputs.length; ++i) {
+        inputs.item(i).addEventListener("change", function(ev) {
+          var errors = validate(form, constraints) || {};
+          showErrorsForInput(this, errors[this.name])
+        });
+      }
+
+      function showErrors(form, errors) {
+        _.each(form.querySelectorAll("input[name], select[name]"), function(input) {          
+          showErrorsForInput(input, errors && errors[input.name]);
+        });
+      }
+
+      function showErrorsForInput(input, errors) {        
+        var formGroup = closestParent(input.parentNode, "form-group")          
+          , messages = formGroup.querySelector(".messages");        
+        if (errors) {          
+          formGroup.classList.add("has-error");          
+          _.each(errors, function(error) {
+            addError(messages, error);
+          });
+        } else {          
+          formGroup.classList.add("has-success");
+        }
+      }
+
+      function closestParent(child, className) {
+        if (!child || child == document) {
+          return null;
+        }
+        if (child.classList.contains(className)) {
+          return child;
+        } else {
+          return closestParent(child.parentNode, className);
+        }
+      }      
+
+      function addError(messages, error) {
+        var block = document.createElement("p");
+        block.classList.add("help-block");
+        block.classList.add("error");
+        block.innerText = error;
+        messages.appendChild(block);
+      }
+      function showSuccess() {
+        alert("Success!");
+      }
+    })();
+  </script>
+</body>
+</html>
